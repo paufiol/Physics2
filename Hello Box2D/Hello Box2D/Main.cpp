@@ -2,7 +2,7 @@
 #include "Box2D/Box2D.h"
 
 //#include <stdio.h>
-
+#pragma comment ( lib, "Box2D/Box2D.lib")
 
 
 int main(int argc, char** argv) {
