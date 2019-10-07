@@ -39,15 +39,32 @@ bool ModulePhysics::Start()
 	// TODO 4: Create a a big static circle as "ground"
 
 	
-	b2BodyDef groundDef;
-	groundDef.type = b2_staticBody;
-	groundDef.position.Set(PIXEL_TO_METER(SCREEN_WIDTH / 2), PIXEL_TO_METER(SCREEN_HEIGHT / 2));
-	b2Body* groundBody = world->CreateBody(&groundDef);
-	b2CircleShape groundShape;
-	groundShape.m_radius = PIXEL_TO_METER(SCREEN_HEIGHT / 3);
+	b2BodyDef circleDef;
+	circleDef.type = b2_staticBody;
+	circleDef.position.Set(PIXEL_TO_METER(SCREEN_WIDTH / 2), PIXEL_TO_METER(SCREEN_HEIGHT / 2));
+	b2Body* circleBody = world->CreateBody(&circleDef);
+	b2CircleShape circleShape;
+	circleShape.m_radius = PIXEL_TO_METER(SCREEN_HEIGHT / 6);
+
+
 
 	b2FixtureDef fixture;
-	fixture.shape = &groundShape;
+	fixture.shape = &circleShape;
+
+	circleBody->CreateFixture(&circleShape, 0.0f);
+
+	//Ground
+	b2BodyDef groundDef;
+	groundDef.type = b2_staticBody;
+	groundDef.position.Set(PIXEL_TO_METER(0), PIXEL_TO_METER(700));
+	b2Body* groundBody = world->CreateBody(&groundDef);
+	b2PolygonShape groundShape;
+	groundShape.SetAsBox(PIXEL_TO_METER(SCREEN_WIDTH), PIXEL_TO_METER(50));
+
+
+
+	b2FixtureDef groundfixture;
+	groundfixture.shape = &groundShape;
 
 	groundBody->CreateFixture(&groundShape, 0.0f);
 
@@ -104,7 +121,19 @@ update_status ModulePhysics::PostUpdate()
 					App->renderer->DrawCircle(METER_TO_PIXEL(pos.x), METER_TO_PIXEL(pos.y), METER_TO_PIXEL(shape->m_radius), 255, 255, 255);
 				}
 				break;
+				case b2Shape::e_polygon:
+				{
+					b2PolygonShape* shape = (b2PolygonShape*)f->GetShape();
+					b2Vec2 pos = f->GetBody()->GetPosition();
+					SDL_Rect Rect;
+					Rect.x = METER_TO_PIXEL(pos.x);
+					Rect.y = METER_TO_PIXEL(pos.y);
+					Rect.w = METER_TO_PIXEL(shape->m_vertices[2].x);
+					Rect.h = METER_TO_PIXEL(shape->m_vertices[3].y);
 
+					App->renderer->DrawQuad(Rect, 128, 0, 0);
+				}
+				break;
 				// You will have to add more cases to draw boxes, edges, and polygons ...
 			}
 		}
