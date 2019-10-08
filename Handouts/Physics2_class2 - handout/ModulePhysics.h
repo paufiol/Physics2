@@ -22,6 +22,7 @@ class Body {
 	public:
 		b2Body* body;
 		p2Point<float>* GetBodyPos();
+		p2Point<float>* GetBodyUpperBound();
 
 };
 

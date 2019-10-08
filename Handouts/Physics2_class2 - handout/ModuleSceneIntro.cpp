@@ -6,6 +6,8 @@
 #include "ModuleTextures.h"
 #include "ModulePhysics.h"
 
+class Body;
+
 ModuleSceneIntro::ModuleSceneIntro(Application* app, bool start_enabled) : Module(app, start_enabled)
 {
 	circle = box = rick = NULL;
@@ -44,7 +46,9 @@ update_status ModuleSceneIntro::Update()
 		// On space bar press, create a circle on mouse position
 	if (App->input->GetKey(SDL_SCANCODE_1) == KEY_DOWN)
 	{
-		App->physics->CreateCircle(PIXEL_TO_METERS(App->input->GetMouseX()), PIXEL_TO_METERS(App->input->GetMouseY()), PIXEL_TO_METERS(50));
+		//p2List_item<Body *>* item = new p2List_item<Body*>;
+		Body item = *App->physics->CreateCircle(PIXEL_TO_METERS(App->input->GetMouseX()), PIXEL_TO_METERS(App->input->GetMouseY()), PIXEL_TO_METERS(25));
+		bodies.add(item);
 	}
 
 	if (App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN)
@@ -97,6 +101,18 @@ update_status ModuleSceneIntro::Update()
 
 	}
 	// TODO 7: Draw all the circles using "circle" texture
+	
+
+
+	if (bodies.getFirst() != nullptr) {
+		p2List_item<Body>* i = bodies.getFirst();
+		while (i != nullptr) {
+			App->renderer->Blit(circle, i->data.GetBodyUpperBound()->x, i->data.GetBodyUpperBound()->y);
+			i = i->next;
+		}
+	}
+	
+	
 
 	return UPDATE_CONTINUE;
 }

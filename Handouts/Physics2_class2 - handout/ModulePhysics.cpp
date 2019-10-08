@@ -28,6 +28,23 @@ p2Point<float>* Body::GetBodyPos() {
 	return ret;
 }
 
+p2Point<float>* Body::GetBodyUpperBound() {
+	p2Point<float>* ret = new p2Point<float>;
+
+	//This should work For everything but circles. I guess.
+	b2AABB aabb;
+	aabb.lowerBound = b2Vec2(FLT_MAX, FLT_MAX);
+	aabb.upperBound = b2Vec2(-FLT_MAX, -FLT_MAX);
+	for (b2Fixture* fixture = body->GetFixtureList(); fixture; fixture = fixture->GetNext())
+	{
+		aabb.Combine(aabb, fixture->GetAABB(0));
+	}
+	
+	ret->x = METERS_TO_PIXELS(aabb.upperBound.x);
+	ret->y = METERS_TO_PIXELS(aabb.upperBound.y);
+	
+	return ret;
+}
 // Destructor
 ModulePhysics::~ModulePhysics()
 {

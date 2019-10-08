@@ -20,7 +20,7 @@ public:
 
 public:
 
-	Body* bodies;
+	p2List<Body> bodies;
 
 	SDL_Texture* circle;
 	SDL_Texture* box;
