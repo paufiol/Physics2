@@ -54,8 +54,8 @@ update_status ModuleSceneIntro::Update()
 	if (App->input->GetKey(SDL_SCANCODE_2) == KEY_DOWN)
 	{
 		// TODO 1: When pressing 2, create a box on the mouse position
-		App->physics->CreateBox(PIXEL_TO_METERS(App->input->GetMouseX()), PIXEL_TO_METERS(App->input->GetMouseY()), PIXEL_TO_METERS(75), PIXEL_TO_METERS(50));
-
+		Body item = *App->physics->CreateBox(PIXEL_TO_METERS(App->input->GetMouseX()), PIXEL_TO_METERS(App->input->GetMouseY()), PIXEL_TO_METERS(50), PIXEL_TO_METERS(25));
+		bodies.add(item);
 		// TODO 2: To have the box behave normally, set fixture's density to 1.0f
 	}
 
@@ -107,7 +107,16 @@ update_status ModuleSceneIntro::Update()
 	if (bodies.getFirst() != nullptr) {
 		p2List_item<Body>* i = bodies.getFirst();
 		while (i != nullptr) {
-			App->renderer->Blit(circle, i->data.GetBodyUpperBound()->x, i->data.GetBodyUpperBound()->y);
+			switch (i->data.GetType()) {
+			case(0)://circle
+				App->renderer->Blit(circle, i->data.GetBodyUpperBound()->x, i->data.GetBodyUpperBound()->y, nullptr, 1.0f, RADTODEG*i->data.GetRotation());
+				break;
+
+			case(2)://polygon
+				App->renderer->Blit(box, i->data.GetTopLeft()->x, i->data.GetTopLeft()->y, nullptr, 1.0f, RADTODEG*i->data.GetRotation());
+				break;
+			}
+		
 			i = i->next;
 		}
 	}

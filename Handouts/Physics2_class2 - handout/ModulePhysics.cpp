@@ -40,11 +40,35 @@ p2Point<float>* Body::GetBodyUpperBound() {
 		aabb.Combine(aabb, fixture->GetAABB(0));
 	}
 	
-	ret->x = METERS_TO_PIXELS(aabb.upperBound.x);
-	ret->y = METERS_TO_PIXELS(aabb.upperBound.y);
+	ret->x = METERS_TO_PIXELS(aabb.lowerBound.x);
+	ret->y = METERS_TO_PIXELS(aabb.lowerBound.y);
 	
 	return ret;
 }
+
+p2Point<float>* Body::GetTopLeft() {
+
+	b2Fixture* f = body->GetFixtureList();
+	b2PolygonShape* polygonShape = (b2PolygonShape*)f->GetShape();
+	b2Vec2 vec = polygonShape->GetVertex(0);
+	vec = body->GetWorldPoint(vec);
+	
+	p2Point<float> ret;
+	ret.x = METERS_TO_PIXELS(vec.x);
+	ret.y = METERS_TO_PIXELS(vec.y);
+
+	return &ret;
+}
+
+float Body::GetRotation() {
+	float ret = body->GetAngle();
+	return  ret;
+}
+
+int Body::GetType() {
+	return (int)body->GetFixtureList()->GetType();
+}
+
 // Destructor
 ModulePhysics::~ModulePhysics()
 {
@@ -171,7 +195,7 @@ update_status ModulePhysics::PostUpdate()
 	return UPDATE_CONTINUE;
 }
 
-Body* ModulePhysics::CreateCircle(int x, int y, uint r) {
+Body* ModulePhysics::CreateCircle(int x, int y, float r) {
 	b2BodyDef body;
 	body.type = b2_dynamicBody;
 	float radius = r;
@@ -192,7 +216,7 @@ Body* ModulePhysics::CreateCircle(int x, int y, uint r) {
 	return &ret;
 }
 
-void ModulePhysics::CreateBox(int x, int y, uint w, uint h) {
+Body*  ModulePhysics::CreateBox(int x, int y, float w, float h) {
 	b2BodyDef groundDef;
 	groundDef.type = b2_dynamicBody;
 	groundDef.position.Set(x, y);
@@ -204,6 +228,10 @@ void ModulePhysics::CreateBox(int x, int y, uint w, uint h) {
 	fixture.shape = &groundShape;
 
 	groundBody->CreateFixture(&groundShape, 1.0f);
+
+	Body ret;
+	ret.body = groundBody;
+	return &ret;
 }
 
 void ModulePhysics::CreateChain(int x, int y, float* points, uint array_size) {

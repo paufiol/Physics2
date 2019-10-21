@@ -23,7 +23,9 @@ class Body {
 		b2Body* body;
 		p2Point<float>* GetBodyPos();
 		p2Point<float>* GetBodyUpperBound();
-
+		p2Point<float>* GetTopLeft();
+		float GetRotation();
+		int GetType();
 };
 
 class ModulePhysics : public Module
@@ -38,8 +40,8 @@ public:
 	bool CleanUp();
 
 	// TODO 4: Move body creation to 3 functions to create circles, rectangles and chains
-	Body* CreateCircle(int x, int y, uint r);
-	void CreateBox(int x, int y, uint w, uint h);
+	Body* CreateCircle(int x, int y, float r);
+	Body* CreateBox(int x, int y, float w, float h);
 	void CreateChain(int x, int y, float* points, uint array_size);
 
 private:
