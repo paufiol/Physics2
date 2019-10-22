@@ -50,6 +50,21 @@ bool ModulePhysics::Start()
 	fixture.shape = &shape;
 	b->CreateFixture(&fixture);
 
+	//Sensor bottom
+	b2BodyDef sensorbodyDef;
+	sensorbodyDef.type = b2_staticBody;
+	sensorbodyDef.position.Set(PIXEL_TO_METERS(0), PIXEL_TO_METERS(730));
+	
+	b2Body* sensorbody = world->CreateBody(&sensorbodyDef);
+
+	b2PolygonShape sensorshape;
+	sensorshape.SetAsBox(PIXEL_TO_METERS(SCREEN_WIDTH), PIXEL_TO_METERS(20));
+
+	b2FixtureDef sensorfixture;
+	sensorfixture.shape = &sensorshape;
+	sensorfixture.isSensor = true;
+	sensorbody->CreateFixture(&sensorfixture);
+
 	return true;
 }
 
@@ -303,6 +318,13 @@ void ModulePhysics::BeginContact(b2Contact* contact) {
 	LOG("Collision!----");
 	PhysBody* A = (PhysBody*)contact->GetFixtureA()->GetBody()->GetUserData();
 	PhysBody* B = (PhysBody*)contact->GetFixtureB()->GetBody()->GetUserData();
+	
+	if (A != nullptr && A->module != nullptr) {
+		A->module->OnCollision(A, B);
+	}
+	if (B != nullptr && B->module != nullptr) {
+		B->module->OnCollision(A, B);
+	}
 }
 
 
